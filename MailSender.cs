@@ -26,22 +26,39 @@
 
                         int salary = EmployeeDepartment.GetSalary(candidate.Experience);
 
-                        Console.WriteLine($"MESSAGE SENT: Congratulations {candidate.Name}, you've been hired with salary: {salary}");
+                        SendMessage(candidate.Name, salary);
                     }
                     else
                     {
-                        Console.WriteLine($"MESSAGE SENT: Sorry {candidate.Name}, you did not get a job");
+                        SendMessage(candidate.Name, null);
                     }
                 }
                 catch (TooYoungExeption ex)
                 {
-                    Console.WriteLine($"ERROR: {ex.Message} Age {ex.Age}");
+                    LogErrorNotPublish($"ERROR: {ex.Message} Age {ex.Age}");
+                }
+                catch (DivideByZeroException ex)
+                {
+                    LogErrorNotPublish($"ERROR: {ex.Message}");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"ERROR: {ex.Message}");
+                    LogErrorNotPublish($"ERROR: {ex.Message}");
                 }
             }
+        }
+
+        private void SendMessage(string name, int? salary)
+        {
+            if(salary is not null)
+                Console.WriteLine($"MESSAGE SENT: Congratulations {name}, you've been hired with salary: {salary}");
+            else
+                Console.WriteLine($"MESSAGE SENT: Sorry {name}, you did not get a job");
+        }
+
+        private void LogErrorNotPublish(string message)
+        {
+            Console.WriteLine(message);
         }
     }
 }
