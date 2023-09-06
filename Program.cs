@@ -14,9 +14,29 @@ namespace hwLesson15
                 new Candidate("Sarah", 1999, 5)
             };
 
-            var sender = new MailSender(candidates);
-
-            sender.Send();
+            foreach (var candidate in candidates)
+            {
+                try
+                {
+                    MailSender.Send(candidate);
+                }
+                catch (TooYoungExeption ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"ERROR: {ex.Message} Age {ex.Age}");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                }
+                catch (DivideByZeroException ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"ERROR: {ex.Message}");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"ERROR: {ex.Message}");
+                }
+            }
         }
     }
 }

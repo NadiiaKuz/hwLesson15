@@ -1,64 +1,36 @@
 ﻿namespace hwLesson15
 {
-    class MailSender
+    static class MailSender
     {
-        private Candidate[] candidates;
-
-        public MailSender(params Candidate[] candidates)
+        public static void Send(Candidate candidate)
         {
-            this.candidates = candidates;
-        }
-
-        public void Send()
-        {
-            foreach (var candidate in candidates)
             {
-                try
+                bool isApproved = EmployeeDepartment.ApproveApplication(candidate.Name);
+
+                if (isApproved)
                 {
-                    bool isApproved = EmployeeDepartment.ApproveApplication(candidate.Name);
+                    byte age = Convert.ToByte(DateTime.Now.Year - candidate.YearOfBirth);
 
-                    if (isApproved)
-                    {
-                        byte age = Convert.ToByte(DateTime.Now.Year - candidate.YearOfBirth);
+                    if (age < 18)
+                        throw new TooYoungExeption(age);
 
-                        if (age < 18)
-                            throw new TooYoungExeption(age);
+                    int salary = EmployeeDepartment.GetSalary(candidate.Experience);
 
-                        int salary = EmployeeDepartment.GetSalary(candidate.Experience);
-
-                        SendMessage(candidate.Name, salary);
-                    }
-                    else
-                    {
-                        SendMessage(candidate.Name, null);
-                    }
+                    SendMessage(candidate.Name, salary);
                 }
-                catch (TooYoungExeption ex)
+                else
                 {
-                    LogErrorNotPublish($"ERROR: {ex.Message} Age {ex.Age}");
-                }
-                catch (DivideByZeroException ex)
-                {
-                    LogErrorNotPublish($"ERROR: {ex.Message}");
-                }
-                catch (Exception ex)
-                {
-                    LogErrorNotPublish($"ERROR: {ex.Message}");
+                    SendMessage(candidate.Name, null);
                 }
             }
         }
 
-        private void SendMessage(string name, int? salary)
+        private static void SendMessage(string name, int? salary)
         {
             if(salary is not null)
                 Console.WriteLine($"MESSAGE SENT: Congratulations {name}, you've been hired with salary: {salary}");
             else
                 Console.WriteLine($"MESSAGE SENT: Sorry {name}, you did not get a job");
-        }
-
-        private void LogErrorNotPublish(string message)
-        {
-            Console.WriteLine(message);
         }
     }
 }
